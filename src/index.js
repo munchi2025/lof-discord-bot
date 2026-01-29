@@ -181,11 +181,19 @@ process.on('unhandledRejection', (error) => {
   console.error('❌ Unhandled promise rejection:', error);
 });
 
-// Login
-if (!process.env.DISCORD_TOKEN) {
-  console.error('❌ DISCORD_TOKEN not found in .env file');
-  console.log('📋 Please copy .env.example to .env and fill in your bot token');
+// Login validation
+const token = process.env.DISCORD_TOKEN?.replace(/['"]/g, '').trim();
+
+if (!token) {
+  console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.error('❌ ERROR: DISCORD_TOKEN is missing!');
+  console.error('📊 Current Environment Keys:', Object.keys(process.env).filter(k => !k.includes('TOKEN') && !k.includes('SECRET')));
+  console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   process.exit(1);
 }
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(token).catch(err => {
+  console.error('❌ Failed to login to Discord:', err.message);
+  process.exit(1);
+});
+
