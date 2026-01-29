@@ -135,9 +135,18 @@ async function handleActionCommand(message) {
 
   // If we have a local GIF, attach it
   if (gifPath && fs.existsSync(gifPath)) {
+    const stats = fs.statSync(gifPath);
+    console.log(`[DEBUG] Attaching GIF: ${gifPath} (Size: ${stats.size} bytes)`);
+    
+    if (stats.size < 200) {
+      console.warn('⚠️ WARNING: GIF file is suspiciously small. It might be a Git LFS pointer!');
+    }
+
     const attachment = new AttachmentBuilder(gifPath, { name: `${action}.gif` });
     embed.setImage(`attachment://${action}.gif`);
     messageOptions.files = [attachment];
+  } else {
+    console.warn(`[DEBUG] GIF not found at path: ${gifPath}`);
   }
 
   // Add subtle footer
