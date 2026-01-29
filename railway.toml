@@ -1,6 +1,0 @@
-[build]
-builder = "nixpacks"
-
-[build.nixpacksPlan.phases.setup]
-nixPkgs = ["git-lfs"]
-cmds = ["git lfs install", "git lfs pull"]
